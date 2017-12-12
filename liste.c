@@ -1,6 +1,8 @@
 /* un primo esempio di uso di liste: leggo un testo e creo un dizionario */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #define MY_MAX 100
@@ -12,10 +14,10 @@
 #define MY_RUIN -9
 
 FILE *fInput;
-char *fInputName = "leopardi.dat";
+char *fInputName = "testo.dat";
 
-int listType = INVERSE_LIST;
-//int listType = DIRECT_LIST;
+//int listType = INVERSE_LIST;
+int listType = DIRECT_LIST;
 char myString[MY_MAX];
 
 void myStart(void);
@@ -38,8 +40,7 @@ struct word{
 struct word *pointerStart;
 
 /*****************************************************************************/
-int main(void)
-{
+int main(int argc, char const *argv[]){
   int myEnd = 0;
 
   myStart();
@@ -74,6 +75,7 @@ int main(void)
      INVERSE_LIST, listType);
     exit(-9); 
   }
+
 }
 
 /*****************************************************************************/
@@ -113,14 +115,18 @@ int readWord(void)
   int j, myEnd = 0;
   j = 0;
   while( (j < MY_MAX) && (myFlag == 1)){ 
+
     myString[j] = fgetc(fInput);
+
     if(myString[j] == ' '){
       myString[j] = '\0';
       myFlag = 0;
     }
+
     else if(myString[j] == '\n'){
       j--;
     }/*per ignorare il fine riga*/
+
     else if(myString[j] == EOF){
       myEnd = 1; 
       myString[j] = '\0'; 
@@ -136,7 +142,7 @@ int readWord(void)
      MY_MAX);
     exit(-9);
   }
-  printf("Parola di lunghezza %d: %s\n", strlen(myString), myString);
+  printf("Parola di lunghezza %ld: %s\n", strlen(myString), myString);
   return myEnd;
 }
 
