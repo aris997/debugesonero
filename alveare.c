@@ -13,6 +13,12 @@ typedef struct coord{
   lint y;
 }coord;
 
+typedef struct info{
+  lint init;
+  int x;
+  int y;
+}info;
+
 void error(int n);
 struct coord finder(lint, int);
 
@@ -26,7 +32,7 @@ int main(){
   double invRMAX = 1./(double)RAND_MAX;
   double rho = 0.1;
   lint sum = 0;
-  lint i=0, ii=0;
+  lint i=0, ii=0, id;
 
   int r;
 
@@ -47,8 +53,8 @@ int main(){
     if(alveare[y] == NULL) error(1);
   }
 
-  lint *rubrica;
-  rubrica = (lint *) calloc((L*L - 0.5*L), sizeof(lint));
+  info *rubrica;
+  rubrica = (info *) calloc((L*L - 0.5*L), sizeof(info));
   if(rubrica == NULL) error(1);
 
  //PRINTING STANDARD
@@ -61,7 +67,7 @@ int main(){
       i++;
       if((double)rand()*invRMAX < rho){
         alveare[x][y] = i;
-        rubrica[sum] = i;
+        rubrica[sum].init = i;
         sum++;
       }
       
@@ -77,7 +83,7 @@ int main(){
   
   sum--; //poiche' nel if aggiungo uno dopo che sum e' stato indice di rubrica[i]
   
-  rubrica = (lint *) realloc(rubrica, sum*sizeof(lint));
+  rubrica = (info *) realloc(rubrica, sum*sizeof(info));
   if(rubrica == NULL) error(1);
   
   fprintf(stderr, "\ndiffusione api presenti %f %ld\n", sum/(double)((L*L) - 0.5*L), sum);
@@ -125,12 +131,20 @@ int main(){
     for(ii=0; ii<sum; ii++){
 
       id = lrand48()%sum;
-      cella = finder(rubrica[id], L);
-    
+   
+      if(i==0){
+        cella = finder(rubrica[id].init, L);
+        x = cella.x;
+        y = cella.y;
+      }
+
+      else{
+        x = rubrica[id].x;
+        y = rubrica[id].y;
+      }
+
       fprintf(stderr, "name:%ld id:%d ", rubrica[id], id);
 
-      x = cella.x;
-      y = cella.y;
 
       r = lrand48()%6;
 
@@ -165,22 +179,49 @@ int main(){
           alveare[pE[x]][S[y]] = alveare[x][y];
           rubrica[id].x = pE[x];
           rubrica[id].y = S[y];
-        else if(alveare[dE[x]][S[y]] == 0) alveare[dE[x]][S[y]] = alveare[x][y];
+        }
+        else if(alveare[dE[x]][S[y]] == 0){
+          alveare[dE[x]][S[y]] = alveare[x][y];
+          rubrica[id].x = dE[x];
+          rubrica[id].y = S[y];
+        }
         else error(4);
       }
       else if(r == 3){ //Sud-Ovest
-        if(y%2 == 0 && alveare[pO[x]][S[y]] == 0) alveare[pO[x]][S[y]] = alveare[x][y];
-        else if(alveare[dO[x]][S[y]] == 0) alveare[dO[x]][S[y]] = alveare[x][y];
+        if(y%2 == 0 && alveare[pO[x]][S[y]] == 0){
+          alveare[pO[x]][S[y]] = alveare[x][y];
+          rubrica[id].x = pO[x];
+          rubrica[id].y = S[y];
+        }
+        else if(alveare[dO[x]][S[y]] == 0){
+          alveare[dO[x]][S[y]] = alveare[x][y];
+          rubrica[id].x = dO[x];
+          rubrica[id].y = S[y];
+        }
         else error(4);
       }
       else if(r == 4){ //Ovest
-        if(y%2 == 0 && alveare[pO[x]][y] == 0) alveare[pO[x]][y]  = alveare[x][y];
-        else if(alveare[pO[x]][y] == 0) alveare[dO[x]][y] = alveare[x][y];
+        if(y%2 == 0 && alveare[pO[x]][y] == 0){
+          alveare[pO[x]][y]  = alveare[x][y];
+          rubrica[id].x = pO[x];
+        }
+        else if(alveare[pO[x]][y] == 0){
+          alveare[dO[x]][y] = alveare[x][y];
+          rubrica[id].x = dO[x];
+        }
         else error(4);
       }
       else if(r == 5){ //Nord-Ovest
-        if(y%2 == 0 && alveare[pO[x]][N[y]] == 0) alveare[pO[x]][N[y]] = alveare[x][y];
-        else if(alveare[dO[x]][N[y]] == 0) alveare[dO[x]][N[y]] = alveare[x][y];
+        if(y%2 == 0 && alveare[pO[x]][N[y]] == 0){
+          alveare[pO[x]][N[y]] = alveare[x][y];
+          rubrica[id].x = pO[x];
+          rubrica[id].y = N[y];
+        }
+        else if(alveare[dO[x]][N[y]] == 0){
+          alveare[dO[x]][N[y]] = alveare[x][y];
+          rubrica[id].x = dO[x];
+          rubrica[id].y = N[y];
+        }
         else error(4);
       }
       else error(3);
